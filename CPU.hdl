@@ -26,18 +26,33 @@
  */
 
 CHIP CPU {
-
-    IN  inM[16],         // M value input  (M = contents of RAM[A])
-        instruction[16], // Instruction for execution
-        reset;           // Signals whether to re-start the current
-                         // program (reset==1) or continue executing
-                         // the current program (reset==0).
-
-    OUT outM[16],        // M value output
-        writeM,          // Write to M? 
-        addressM[15],    // Address in data memory (of M)
-        pc[15];          // address of next instruction
+    IN  inM[16], instruction[16], reset;
+    OUT outM[16], writeM, addressM[15], pc[15];
 
     PARTS:
-    // Put your code here:
+    Decode(in=instruction,
+           type=type,
+           a=a,
+           c1=c1,c2=c2,c3=c3,c4=c4,c5=c5,c6=c6,
+           d1=d1,d2=d2,d3=d3,
+           j1=j1,j2=j2,j3=j3);
+
+    ARegister(in=instruction[0..14], load=aLoadA, out=aOut, out[0..14]=addressM);
+    DRegister(in=aluOut, load=d2, out=dOut);
+
+    Mux16(a=aOut, b=inM, sel=a, out=aluY);
+    ALU(x=dOut, y=aluY,
+        zx=c1, nx=c2, zy=c3, ny=c4, f=c5, no=c6,
+        out=aluOut, out=outM, zr=zr, ng=ng);
+
+    And(a=d1, b=type, out=loadAFromC);
+    Mux(a=loadAFromC, b=true, sel=Not(type), out=aLoadA);
+
+    Register(in=aluOut, load=loadAFromC, out=aOut);
+
+    Or(a=d3, b=false, out=writeM);
+
+    Jump(ng=ng, zr=zr, j1=j1, j2=j2, j3=j3, out=jump);
+
+    PC(in=aOut, load=jump, inc=true, reset=reset, out[0..14]=pc);
 }
