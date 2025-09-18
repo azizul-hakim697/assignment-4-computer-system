@@ -31,7 +31,7 @@ CHIP Memory {
     Not(in=address[13], out=n13);
 
     And(a=n14, b=n13, out=selRAM);
-    And(a=address[14], b=n13, out=selScreen);
+    And(a=address[13], b=n14, out=selScreen);
     And(a=address[14], b=address[13], out=selKeyboard);
 
     And(a=load, b=selRAM, out=ramLoad);
@@ -45,3 +45,4 @@ CHIP Memory {
     Mux16(a=ramOrScreen, b=kbOut, sel=selKeyboard, out=out);
 
 }
+
