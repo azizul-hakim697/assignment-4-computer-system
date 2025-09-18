@@ -24,6 +24,26 @@ CHIP Decode {
         d1,d2,d3,           // Destination wires
         j1,j2,j3;           // Jump wires
 
-PARTS:
-    // Put your code here:
+ PARTS:
+    Or(a=in[15], b=false, out=isC);
+
+    And(a=in[15], b=in[12], out=j1);
+    And(a=in[15], b=in[11], out=j2);
+    And(a=in[15], b=in[10], out=j3);
+
+    And(a=in[15], b=in[5], out=d1);
+    And(a=in[15], b=in[4], out=d2);
+    And(a=in[15], b=in[3], out=d3);
+
+    And(a=in[15], b=in[6], out=c1);
+    And(a=in[15], b=in[7], out=c2);
+    And(a=in[15], b=in[8], out=c3);
+    And(a=in[15], b=in[9], out=c4);
+    And(a=in[15], b=in[13], out=c5);
+    And(a=in[15], b=in[14], out=c6);
+    And(a=in[15], b=in[12], out=a);
+
+    Not(in=in[15], out=isA);
+    And(a=isA, b=true, out=aInst);
+    Or(a=aInst, b=d1, out=d1);
 }
